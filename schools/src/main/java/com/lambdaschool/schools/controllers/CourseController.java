@@ -1,12 +1,24 @@
 package com.lambdaschool.schools.controllers;
 
 import com.lambdaschool.schools.models.Course;
+import com.lambdaschool.schools.models.ErrorDetail;
 import com.lambdaschool.schools.services.CoursesService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -34,6 +46,9 @@ public class CourseController
      * @return JSON list of all courses with a status of OK
      * @see CoursesService#findAll() CoursesService.findAll()
      */
+    @ApiOperation(value = "returns all Courses",
+        response = Course.class,
+        responseContainer = "List")
     @GetMapping(value = "/courses",
         produces = {"application/json"})
     public ResponseEntity<?> listAllCourses()
@@ -51,9 +66,19 @@ public class CourseController
      * @return JSON object of the course you seek
      * @see CoursesService#findCourseById(long) CoursesService.findCourseById(long)
      */
+    @ApiOperation(value = "Retrieve a course based off of course id",
+        response = Course.class)
+    @ApiResponses(value = {@ApiResponse(code = 200,
+        message = "Course Found",
+        response = Course.class), @ApiResponse(code = 404,
+        message = "Course Not Found",
+        response = ErrorDetail.class)})
     @GetMapping(value = "/course/{courseId}",
         produces = {"application/json"})
     public ResponseEntity<?> getCourseById(
+        @ApiParam(value = "Course id",
+            required = true,
+            example = "4")
         @PathVariable
             Long courseId)
     {
@@ -73,10 +98,19 @@ public class CourseController
      * @throws URISyntaxException Exception if something does not work in creating the location header
      * @see CoursesService#save(Course) CoursesService.save(Course)
      */
+    @ApiOperation(value = "adds a course given in the request body",
+        response = Void.class)
+    @ApiResponses(value = {@ApiResponse(code = 200,
+        message = "Course Found",
+        response = Course.class), @ApiResponse(code = 404,
+        message = "Course Not Found",
+        response = ErrorDetail.class)})
     @PostMapping(value = "/course",
         consumes = {"application/json"})
     public ResponseEntity<?> addCourse(
         @Valid
+        @ApiParam(value = "a full course object",
+            required = true)
         @RequestBody
             Course newcourse) throws
                               URISyntaxException
@@ -108,12 +142,24 @@ public class CourseController
      * @return status of OK
      * @see CoursesService#save(Course) CoursesService.save(Course)
      */
+    @ApiOperation(value = "updates a course given in the request body",
+        response = Void.class)
+    @ApiResponses(value = {@ApiResponse(code = 200,
+        message = "Course Found",
+        response = Course.class), @ApiResponse(code = 404,
+        message = "Course Not Found",
+        response = ErrorDetail.class)})
     @PutMapping(value = "/course/{courseid}",
         consumes = {"application/json"})
     public ResponseEntity<?> updateFullCourse(
         @Valid
+        @ApiParam(value = "a full course object",
+            required = true)
         @RequestBody
             Course updateCourse,
+        @ApiParam(value = "course id",
+            required = true,
+            example = "4")
         @PathVariable
             long courseid)
     {
@@ -131,8 +177,18 @@ public class CourseController
      * @return Status of OK
      * @see CoursesService#delete(long) CoursesService.delete(long)
      */
+    @ApiOperation(value = "Deletes the course user",
+        response = Void.class)
+    @ApiResponses(value = {@ApiResponse(code = 200,
+        message = "Course Found",
+        response = Course.class), @ApiResponse(code = 404,
+        message = "Course Not Found",
+        response = ErrorDetail.class)})
     @DeleteMapping(value = "/course/{id}")
     public ResponseEntity<?> deleteCourseById(
+        @ApiParam(value = "course id",
+            required = true,
+            example = "4")
         @PathVariable
             long id)
     {
